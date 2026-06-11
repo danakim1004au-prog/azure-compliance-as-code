@@ -1,0 +1,51 @@
+# Azure DevOps variant of the compliance gate.
+# Service connection 'sc-compliance' uses workload identity federation
+# (no secret), with Reader on the target subscription.
+
+trigger: none
+
+schedules:
+  - cron: '0 18 * * *'   # nightly, 04:00 AEST
+    displayName: Nightly compliance sweep
+    branches:
+      include: [main]
+    always: true
+
+pr:
+  branches:
+    include: [main]
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: PowerShell@2
+    displayName: Install modules
+    inputs:
+      targetType: inline
+      pwsh: true
+      script: Install-Module Pester, Az.Resources, Az.Storage, Az.Network, Microsoft.Graph.Authentication -Force -Scope CurrentUser
+
+  - task: AzurePowerShell@5
+    displayName: Run compliance suite
+    inputs:
+      azureSubscription: sc-compliance
+      azurePowerShellVersion: latestVersion
+      pwsh: true
+      scriptType: inlineScript
+      inline: |
+        $bytes = [Convert]::FromBase64String('$(GraphCertPfxB64)')
+        $cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($bytes)
+        Connect-MgGraph -TenantId '$(GraphTenantId)' -ClientId '$(GraphClientId)' -Certificate $cert -NoWelcome
+
+        $tagArgs = if ('$(Build.Reason)' -eq 'PullRequest') { @{ Tag = 'critical' } } else { @{} }
+        ./scripts/Invoke-ComplianceRun.ps1 -Suite all @tagArgs
+
+  - task: PublishTestResults@2
+    displayName: Publish to Tests tab
+    condition: always()
+    inputs:
+      testResultsFormat: NUnit
+      testResultsFiles: results/*.xml
+      testRunTitle: Cloud compliance
+      failTaskOnFailedTests: true

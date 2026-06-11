@@ -1,0 +1,28 @@
+{
+  "requiredTags": ["owner", "costCentre", "environment"],
+  "approvedRegions": ["australiaeast", "australiasoutheast"],
+  "forbiddenInboundPorts": [22, 3389],
+  "storageRules": [
+    {
+      "id": "AZ-ST-01",
+      "check": "supportsHttpsTrafficOnly",
+      "expected": true,
+      "severity": "critical",
+      "description": "Storage accounts must enforce HTTPS-only traffic"
+    },
+    {
+      "id": "AZ-ST-02",
+      "check": "minimumTlsVersion",
+      "expected": "TLS1_2",
+      "severity": "critical",
+      "description": "Storage accounts must require TLS 1.2 minimum"
+    },
+    {
+      "id": "AZ-ST-03",
+      "check": "allowBlobPublicAccess",
+      "expected": false,
+      "severity": "critical",
+      "description": "Storage accounts must not allow public blob access"
+    }
+  ]
+}

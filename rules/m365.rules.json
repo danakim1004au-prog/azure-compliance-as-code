@@ -1,0 +1,38 @@
+{
+  "conditionalAccessPolicies": [
+    {
+      "id": "M365-CA-01",
+      "displayName": "CA001 - Require MFA for all users",
+      "expectedState": "enabled",
+      "severity": "critical"
+    },
+    {
+      "id": "M365-CA-02",
+      "displayName": "CA002 - Block legacy authentication",
+      "expectedState": "enabled",
+      "severity": "critical"
+    },
+    {
+      "id": "M365-CA-03",
+      "displayName": "CA003 - Require compliant device for admins",
+      "expectedState": "enabled",
+      "severity": "warning"
+    }
+  ],
+  "authorizationPolicy": [
+    {
+      "id": "M365-AUTHZ-01",
+      "check": "allowInvitesFrom",
+      "expectedOneOf": ["none", "adminsAndGuestInviters"],
+      "severity": "warning",
+      "description": "Guest invitations restricted to admins and guest inviters"
+    },
+    {
+      "id": "M365-AUTHZ-02",
+      "check": "allowedToUseSSPR",
+      "expectedOneOf": [true],
+      "severity": "warning",
+      "description": "Self-service password reset enabled"
+    }
+  ]
+}

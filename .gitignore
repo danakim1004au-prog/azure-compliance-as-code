@@ -1,0 +1,6 @@
+# Test results are generated artifacts
+results/
+
+*.pfx
+*.cer
+.DS_Store
