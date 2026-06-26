@@ -4,3 +4,6 @@ results/
 *.pfx
 *.cer
 .DS_Store
+
+# Internal screenshot checklist (not published)
+docs/screenshot-checklist.md
