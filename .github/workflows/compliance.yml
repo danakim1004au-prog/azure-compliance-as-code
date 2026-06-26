@@ -10,6 +10,7 @@ permissions:
   id-token: write         # OIDC federated login — no stored Azure secrets
   contents: read
   checks: write
+  pull-requests: write    # let the test-result action post its summary comment
 
 jobs:
   compliance:

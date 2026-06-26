@@ -15,8 +15,8 @@ Terraform answers "did we deploy what we declared?" — but most compliance fail
 The naive version hard-codes assertions in the test file; adding a rule means editing PowerShell. Here the catalog is data:
 
 ```json
-{ "id": "AZ-ST-01", "appliesTo": "storageAccount", "check": "supportsHttpsTrafficOnly",
-  "expected": true, "severity": "critical", "description": "Storage accounts must enforce HTTPS" }
+{ "id": "AZ-ST-01", "check": "supportsHttpsTrafficOnly", "expected": true,
+  "severity": "critical", "description": "Storage accounts must enforce HTTPS-only traffic" }
 ```
 
 …and the test file generates one `It` block per rule × resource via Pester's `-ForEach`. New rule = one JSON object in a PR, reviewed like any code change. The Tests tab shows `AZ-ST-01: stproddata supportsHttpsTrafficOnly` as an individually passing/failing case.
@@ -25,8 +25,8 @@ The naive version hard-codes assertions in the test file; adding a rule means ed
 
 | Catalog | Rules |
 |---|---|
-| `azure.rules.json` | Required tags (owner/costCentre/environment) on all resources · storage HTTPS-only + min TLS 1.2 + no public blob access · no NSG rule allowing 0.0.0.0/0 inbound on 22/3389 · SQL auditing enabled · resources only in approved AU regions |
-| `m365.rules.json` | Named CA policies exist & enabled · legacy auth blocked · SSPR enabled · guest invites restricted · unified audit log on |
+| `azure.rules.json` | Required tags (owner/costCentre/environment) on all resources · storage HTTPS-only + min TLS 1.2 + no public blob access · no NSG rule allowing 0.0.0.0/0 inbound on 22/3389 · resources only in approved AU regions |
+| `m365.rules.json` | Named CA policies exist & enabled · legacy auth blocked · SSPR enabled · guest invites restricted |
 
 ## Tech stack
 
