@@ -23,6 +23,13 @@
       "expected": false,
       "severity": "critical",
       "description": "Storage accounts must not allow public blob access"
+    },
+    {
+      "id": "AZ-ST-04",
+      "check": "allowSharedKeyAccess",
+      "expected": false,
+      "severity": "critical",
+      "description": "Storage accounts must disable shared key access (use Entra ID)"
     }
   ]
 }
