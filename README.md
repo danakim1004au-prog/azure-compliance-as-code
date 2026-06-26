@@ -8,23 +8,7 @@ Terraform answers "did we deploy what we declared?" — but most compliance fail
 
 ## Architecture
 
-```
-rules/azure.rules.json     rules/m365.rules.json
-        │                          │
-        ▼                          ▼
-tests/Azure.Compliance.Tests.ps1   tests/M365.Compliance.Tests.ps1
-  (rule catalog → dynamically generated `It` blocks via -ForEach)
-        │
-        ▼
-scripts/Invoke-ComplianceRun.ps1
-  Pester v5 · NUnit XML out · exit code = violation count
-        │
-   ┌────┴─────────────────────────────┐
-   ▼                                  ▼
-.github/workflows/compliance.yml   pipelines/azure-pipelines.yml
-  azure/login via OIDC               AzureCLI@2 task + workload identity
-  PR gate + nightly cron             PublishTestResults@2 → Tests tab
-```
+![Architecture: JSON rule catalogs feed data-driven Pester suites, run by Invoke-ComplianceRun.ps1 (NUnit XML, exit = violation count), gated in GitHub Actions (OIDC) and Azure DevOps (workload identity).](docs/azure-compliance-as-code_architecture.png)
 
 ## Why dynamic tests from a JSON catalog
 
