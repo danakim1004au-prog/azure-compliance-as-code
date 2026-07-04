@@ -8,7 +8,8 @@ Terraform answers "did we deploy what we declared?" — but most compliance fail
 
 ## Architecture
 
-![Architecture: JSON rule catalogs feed data-driven Pester suites, run by Invoke-ComplianceRun.ps1 (NUnit XML, exit = violation count), gated in GitHub Actions (OIDC) and Azure DevOps (workload identity).](docs/azure-compliance-as-code_architecture.png)
+<img width="1448" height="1086" alt="azure-compliance-as-code_architecture_0705" src="https://github.com/user-attachments/assets/887cfc6c-9e50-43f4-990f-570b243f9eac" />
+
 
 ## Why dynamic tests from a JSON catalog
 
