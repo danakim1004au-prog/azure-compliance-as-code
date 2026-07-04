@@ -1,8 +1,9 @@
-﻿#Requires -Modules Pester, Microsoft.Graph.Authentication
+﻿#Requires -Version 7.0
 <#
     M365 compliance suite — Pester v5, data-driven from rules/m365.rules.json.
-    Assumes Connect-MgGraph has already run (cert app-only in pipelines).
-    Needs Policy.Read.All only.
+    Live mode assumes Connect-MgGraph has already run (cert app-only in pipelines,
+    Policy.Read.All only). Fixtures mode reads tests/fixtures and needs no Graph
+    connection — see tests/ComplianceData.ps1.
 #>
 
 BeforeDiscovery {
@@ -12,10 +13,9 @@ BeforeDiscovery {
 }
 
 BeforeAll {
-    $script:livePolicies = (Invoke-MgGraphRequest -Method GET `
-        -Uri 'https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies').value
-    $script:authz = Invoke-MgGraphRequest -Method GET `
-        -Uri 'https://graph.microsoft.com/v1.0/policies/authorizationPolicy'
+    . "$PSScriptRoot/ComplianceData.ps1"
+    $script:livePolicies = @(Get-ComplianceCaPolicy)
+    $script:authz = Get-ComplianceAuthzPolicy
 }
 
 Describe 'M365-CA: Conditional Access baseline' -Tag 'm365', 'critical' {

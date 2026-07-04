@@ -1,17 +1,20 @@
-﻿#Requires -Modules Pester, Az.Accounts, Az.Resources, Az.Storage, Az.Network
+﻿#Requires -Version 7.0
 <#
     Azure compliance suite — Pester v5, data-driven from rules/azure.rules.json.
-    Assumes Connect-AzAccount has already run (pipeline does OIDC login first).
+    Live mode assumes Connect-AzAccount has already run (pipeline does OIDC login
+    first) and needs Az.Accounts/Resources/Storage/Network. Fixtures mode reads
+    tests/fixtures and needs no cloud connection — see tests/ComplianceData.ps1.
     Read-only by design: these tests hold no write permissions.
 #>
 
 BeforeDiscovery {
     # Discovery phase: build the case lists that -ForEach expands into It blocks.
+    . "$PSScriptRoot/ComplianceData.ps1"
     $script:rules = Get-Content "$PSScriptRoot/../rules/azure.rules.json" -Raw | ConvertFrom-Json
 
-    $script:allResources = Get-AzResource
-    $script:storageAccounts = Get-AzStorageAccount
-    $script:nsgs = Get-AzNetworkSecurityGroup
+    $script:allResources = @(Get-ComplianceResource)
+    $script:storageAccounts = @(Get-ComplianceStorageAccount)
+    $script:nsgs = @(Get-ComplianceNsg)
 
     $script:tagCases = foreach ($r in $script:allResources) {
         foreach ($tag in $script:rules.requiredTags) {

@@ -1,0 +1,14 @@
+[
+  {
+    "StorageAccountName": "stproddata",
+    "EnableHttpsTrafficOnly": true,
+    "MinimumTlsVersion": "TLS1_2",
+    "AllowBlobPublicAccess": false
+  },
+  {
+    "StorageAccountName": "stprodlogs",
+    "EnableHttpsTrafficOnly": true,
+    "MinimumTlsVersion": "TLS1_2",
+    "AllowBlobPublicAccess": false
+  }
+]

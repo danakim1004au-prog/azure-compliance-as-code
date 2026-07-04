@@ -20,6 +20,9 @@ param(
 $ErrorActionPreference = 'Stop'
 New-Item -ItemType Directory -Path $ResultPath -Force | Out-Null
 
+$dataSource = if ($env:COMPLIANCE_DATA_SOURCE) { $env:COMPLIANCE_DATA_SOURCE } else { 'live' }
+Write-Host "Data source: $dataSource (set COMPLIANCE_DATA_SOURCE=fixtures for an offline demo run)" -ForegroundColor Cyan
+
 $testPaths = switch ($Suite) {
     'azure' { @("$PSScriptRoot/../tests/Azure.Compliance.Tests.ps1") }
     'm365'  { @("$PSScriptRoot/../tests/M365.Compliance.Tests.ps1") }
