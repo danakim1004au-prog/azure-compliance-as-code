@@ -1,0 +1,33 @@
+[
+  {
+    "Name": "nsg-web",
+    "SecurityRules": [
+      {
+        "Name": "Allow-RDP-Temp",
+        "Access": "Allow",
+        "Direction": "Inbound",
+        "SourceAddressPrefix": "*",
+        "DestinationPortRange": "3389"
+      },
+      {
+        "Name": "Allow-HTTPS-Inbound",
+        "Access": "Allow",
+        "Direction": "Inbound",
+        "SourceAddressPrefix": "Internet",
+        "DestinationPortRange": "443"
+      }
+    ]
+  },
+  {
+    "Name": "nsg-data",
+    "SecurityRules": [
+      {
+        "Name": "Allow-SQL-FromApp",
+        "Access": "Allow",
+        "Direction": "Inbound",
+        "SourceAddressPrefix": "10.0.1.0/24",
+        "DestinationPortRange": "1433"
+      }
+    ]
+  }
+]

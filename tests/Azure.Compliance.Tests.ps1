@@ -48,12 +48,10 @@ Describe 'AZ-LOC: Approved regions' -Tag 'azure', 'critical' {
 
 Describe 'AZ-ST: Storage account hardening' -Tag 'azure', 'critical' {
     It '<Rule.id>: <AccountName> <Rule.check>' -ForEach $script:storageCases {
-        $actual = switch ($Rule.check) {
-            'supportsHttpsTrafficOnly' { $Account.EnableHttpsTrafficOnly }
-            'minimumTlsVersion'        { [string]$Account.MinimumTlsVersion }
-            'allowBlobPublicAccess'    { [bool]$Account.AllowBlobPublicAccess }
-        }
-        $actual | Should -Be $Rule.expected -Because $Rule.description
+        # check names the Az.Storage property audited, so a new storage rule is
+        # one JSON object with zero test changes.
+        $Account.PSObject.Properties.Name | Should -Contain $Rule.check -Because "rule references unknown storage property '$($Rule.check)'"
+        $Account.$($Rule.check) | Should -Be $Rule.expected -Because $Rule.description
     }
 }
 

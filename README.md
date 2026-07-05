@@ -8,18 +8,18 @@ Terraform answers "did we deploy what we declared?" — but most compliance fail
 
 ## Architecture
 
-![Architecture: JSON rule catalogs feed data-driven Pester suites, run by Invoke-ComplianceRun.ps1 (NUnit XML, exit = violation count), gated in GitHub Actions (OIDC) and Azure DevOps (workload identity).](docs/azure-compliance-as-code_architecture.png)
+![Architecture: JSON rule catalogs feed data-driven Pester suites that read cloud state through a data-source layer (live Azure/Graph or committed fixtures, switched by COMPLIANCE_DATA_SOURCE), run by Invoke-ComplianceRun.ps1 (NUnit XML, exit = violation count), gated in GitHub Actions (OIDC, PR + on-demand) and Azure DevOps (workload identity).](docs/azure-compliance-as-code_architecture.svg)
 
 ## Why dynamic tests from a JSON catalog
 
 The naive version hard-codes assertions in the test file; adding a rule means editing PowerShell. Here the catalog is data:
 
 ```json
-{ "id": "AZ-ST-01", "check": "supportsHttpsTrafficOnly", "expected": true,
+{ "id": "AZ-ST-01", "check": "EnableHttpsTrafficOnly", "expected": true,
   "severity": "critical", "description": "Storage accounts must enforce HTTPS-only traffic" }
 ```
 
-…and the test file generates one `It` block per rule × resource via Pester's `-ForEach`. New rule = one JSON object in a PR, reviewed like any code change. The Tests tab shows `AZ-ST-01: stproddata supportsHttpsTrafficOnly` as an individually passing/failing case.
+…and the test file generates one `It` block per rule × resource via Pester's `-ForEach`. `check` names the audited property directly (`$Account.$($Rule.check)`), so a new storage rule is one JSON object with zero test changes. New rule = one JSON object in a PR, reviewed like any code change. The Tests tab shows `AZ-ST-01: stproddata EnableHttpsTrafficOnly` as an individually passing/failing case.
 
 ## Screenshots
 
@@ -61,7 +61,9 @@ azure-compliance-as-code/
 │   ├── Azure.Compliance.Tests.ps1
 │   ├── M365.Compliance.Tests.ps1
 │   ├── ComplianceData.ps1          # live-vs-fixtures data layer
-│   └── fixtures/                   # committed reference tenant (offline demo)
+│   └── fixtures/                   # committed reference tenants (offline demo)
+│       ├── compliant/              # satisfies every rule → green
+│       └── drift/                  # seeded violations → red
 ├── scripts/
 │   └── Invoke-ComplianceRun.ps1
 ├── pipelines/
@@ -91,9 +93,13 @@ Connect-AzAccount; Connect-MgGraph -Scopes 'Policy.Read.All'   # interactive for
 Install-Module Pester -Scope CurrentUser
 $env:COMPLIANCE_DATA_SOURCE = 'fixtures'
 ./scripts/Invoke-ComplianceRun.ps1                      # 37 checks, all green
+
+$env:COMPLIANCE_FIXTURE_SET = 'drift'                   # a tenant with seeded violations
+./scripts/Invoke-ComplianceRun.ps1                      # 11 fail — HTTPS off, TLS 1.0, public blob,
+                                                        # RDP open to any, disabled/missing CA policy…
 ```
 
-The live/fixtures switch lives in [`tests/ComplianceData.ps1`](tests/ComplianceData.ps1): the test files never call `Get-Az*` / Graph directly, they ask the data layer, which returns live results or fixtures based on `COMPLIANCE_DATA_SOURCE` (defaults to `live`).
+The live/fixtures switch lives in [`tests/ComplianceData.ps1`](tests/ComplianceData.ps1): the test files never call `Get-Az*` / Graph directly, they ask the data layer, which returns live results or fixtures based on `COMPLIANCE_DATA_SOURCE` (defaults to `live`). Under fixtures, `COMPLIANCE_FIXTURE_SET` picks the [`compliant`](tests/fixtures/compliant) or [`drift`](tests/fixtures/drift) reference tenant — the drift set makes "detects post-deployment drift" reproducible with no cloud account.
 
 ## Design decisions
 

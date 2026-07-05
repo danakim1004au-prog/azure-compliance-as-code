@@ -1,4 +1,5 @@
-﻿<#
+#!/usr/bin/env pwsh
+<#
 .SYNOPSIS
     Runs the compliance Pester suites and writes NUnit XML for CI test tabs.
 .DESCRIPTION

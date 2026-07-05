@@ -5,21 +5,21 @@
   "storageRules": [
     {
       "id": "AZ-ST-01",
-      "check": "supportsHttpsTrafficOnly",
+      "check": "EnableHttpsTrafficOnly",
       "expected": true,
       "severity": "critical",
       "description": "Storage accounts must enforce HTTPS-only traffic"
     },
     {
       "id": "AZ-ST-02",
-      "check": "minimumTlsVersion",
+      "check": "MinimumTlsVersion",
       "expected": "TLS1_2",
       "severity": "critical",
       "description": "Storage accounts must require TLS 1.2 minimum"
     },
     {
       "id": "AZ-ST-03",
-      "check": "allowBlobPublicAccess",
+      "check": "AllowBlobPublicAccess",
       "expected": false,
       "severity": "critical",
       "description": "Storage accounts must not allow public blob access"

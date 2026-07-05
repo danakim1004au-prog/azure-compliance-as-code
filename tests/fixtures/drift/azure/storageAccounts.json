@@ -1,0 +1,16 @@
+[
+  {
+    "StorageAccountName": "stproddata",
+    "EnableHttpsTrafficOnly": true,
+    "MinimumTlsVersion": "TLS1_2",
+    "AllowBlobPublicAccess": false,
+    "AllowSharedKeyAccess": false
+  },
+  {
+    "StorageAccountName": "stlegacyweb",
+    "EnableHttpsTrafficOnly": false,
+    "MinimumTlsVersion": "TLS1_0",
+    "AllowBlobPublicAccess": true,
+    "AllowSharedKeyAccess": true
+  }
+]

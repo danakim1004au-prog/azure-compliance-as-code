@@ -4,24 +4,30 @@
     COMPLIANCE_DATA_SOURCE = 'live'     -> query the connected Azure / Graph tenant
                            = 'fixtures' -> load committed sample state from tests/fixtures
 
-    Defaults to 'live', so a local run after Connect-AzAccount / Connect-MgGraph
-    behaves exactly as documented in the README. CI sets 'fixtures' when no OIDC
-    secrets are configured, so the same suites go green with no cloud account —
-    the rule engine is exercised against a known-compliant reference tenant.
+    COMPLIANCE_FIXTURE_SET = 'compliant' (default) -> a tenant that satisfies every rule
+                           = 'drift'                -> a tenant with seeded violations,
+                                                       for demonstrating detection offline
+
+    Defaults to live/compliant, so a local run after Connect-AzAccount / Connect-MgGraph
+    behaves exactly as documented in the README. CI sets 'fixtures' when no OIDC secrets
+    are configured, so the same suites go green with no cloud account — the rule engine is
+    exercised against a known-compliant reference tenant.
 #>
 
 function Get-ComplianceDataSource {
     if ($env:COMPLIANCE_DATA_SOURCE) { $env:COMPLIANCE_DATA_SOURCE } else { 'live' }
 }
 
-$script:FixtureRoot = Join-Path $PSScriptRoot 'fixtures'
+function Get-ComplianceFixtureSet {
+    if ($env:COMPLIANCE_FIXTURE_SET) { $env:COMPLIANCE_FIXTURE_SET } else { 'compliant' }
+}
 
 function Import-Fixture {
     param(
         [Parameter(Mandatory)][string]$RelativePath,
         [switch]$AsHashtable
     )
-    $path = Join-Path $script:FixtureRoot $RelativePath
+    $path = Join-Path (Join-Path $PSScriptRoot 'fixtures') (Join-Path (Get-ComplianceFixtureSet) $RelativePath)
     Get-Content $path -Raw | ConvertFrom-Json -AsHashtable:$AsHashtable
 }
 

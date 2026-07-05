@@ -1,0 +1,4 @@
+[
+  { "displayName": "CA001 - Require MFA for all users", "state": "enabled" },
+  { "displayName": "CA002 - Block legacy authentication", "state": "disabled" }
+]

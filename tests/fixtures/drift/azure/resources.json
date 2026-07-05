@@ -1,0 +1,26 @@
+[
+  {
+    "Name": "stproddata",
+    "ResourceType": "Microsoft.Storage/storageAccounts",
+    "Location": "australiaeast",
+    "Tags": { "owner": "platform-team", "costCentre": "CC-1001", "environment": "prod" }
+  },
+  {
+    "Name": "stlegacyweb",
+    "ResourceType": "Microsoft.Storage/storageAccounts",
+    "Location": "australiaeast",
+    "Tags": { "owner": "platform-team", "costCentre": "CC-1001", "environment": "prod" }
+  },
+  {
+    "Name": "vm-jump-legacy",
+    "ResourceType": "Microsoft.Compute/virtualMachines",
+    "Location": "eastus",
+    "Tags": { "owner": "contractor" }
+  },
+  {
+    "Name": "nsg-web",
+    "ResourceType": "Microsoft.Network/networkSecurityGroups",
+    "Location": "australiasoutheast",
+    "Tags": { "owner": "platform-team", "costCentre": "CC-1002", "environment": "prod" }
+  }
+]
